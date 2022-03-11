@@ -15,9 +15,13 @@ At the end of this section your base lab build looks as follows:
 ![image](images/architecture.png)
 
 In summary:
-- AAA
-- AAA
-- AAA
+- Contoso's on-premise datacenter is simulated by an Azure Virtual Network ("onpremise-vnet"). It contains a Virtual Network Gateway to establish a site-2-site VPN connection to Contoso's Azure network.
+- Azure DNS Private Resolver is instanciated on onpremise-vnet. It is configured to forward to Azure DNS infrastructure all domains related to privatelink.
+- Azure Private DNS Zone "contoso.internal" is linked to onpremise-vnet
+- Contoso's Azure virtual datacenter is a hub&spoke network. The hub VNet ("hub-vnet") contains a Virtual Network Gateway that terminates the site-2-site VPN connection to Contoso's on-prem datacenter. 
+- Azure DNS Private Resolver is instanciated on hub-vnet. It is configured to forward to On-premise DNS infrastructure the requests *.contoso.internal
+- The spoke01 VNet ("spoke01-vnet") contains the private endpoint associated to a PostgreSQL database located in spoke01-rg.
+- All virtual networks contains a Linux Virtual Machine to perform nslookup checks.
 
 ## Task 1: Deploy Templates 
 
@@ -81,20 +85,72 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 - You are now able to login to all VMs using your specified credentials via Serial Console
 - End-to-end network connectivity has been verified from On-Premise to Azure
 
-# Challenge 1: Configure DNS Forwarding Rule set
+# Challenge 1: Configure DNS Forwarding Ruleset
 
-## Task 1: Configure Hub DNS Forwarding Rule set for contoso.internal domain
+## Task 1: Configure Hub DNS Forwarding Ruleset for contoso.internal domain
+
+- In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+![image](images/dnsforwardingruleset-hubcfg01.png)
+
+- Add Forwarding Rule for "contoso.internal." domain to On-premise DNS inbound IP address: 10.233.2.4:53
 
 ![image](images/dnsforwardingruleset-hub.png)
 
+- Check johndoe.contoso.internal DNS resolution from onpremise-vm
+
+![image](images/nslookup-johndoe-onpremise.png)
+
+- Check johndoe.contoso.internal DNS resolution from hub-vm
+
+![image](images/nslookup-johndoe-hub.png)
+
+- Check johndoe.contoso.internal DNS resolution from spoke01-vm
+
+![image](images/nslookup-johndoe-spoke01.png)
+
+- Check johndoe.contoso.internal DNS resolution from spoke02-vm
+
+![image](images/nslookup-johndoe-spoke02.png)
+
+## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
+
+- In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+![image](images/dnsforwardingruleset-onpremisecfg01.png)
+
+- Add Forwarding Rule for "privatelink.postgres.database.azure.com" domain to Azure DNS Private Resolver inbound IP address: 10.221.2.4:53
+
 ![image](images/dnsforwardingruleset-onpremise.png)
 
-check azure vms can resolve johndoe.contoso.internal
 
-## Task 2: Configure Onpremise DNS Forwarding Rule set for postgresql domain
+  > If you plan to go add other PaaS Services during this MicroHack and want to enable DNS resolution from on-premise, it will be required too add additional Private DNS zone name. Full list is available [here](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns).
+
+- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from onpremise-vm
+
+![image](images/nslookup-pgsql-onpremise.png)
+
+- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from hub-vm
+
+![image](images/nslookup-pgsql-hub.png)
+
+- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from spoke01-vm
+
+![image](images/nslookup-pgsql-spoke01.png)
+
+- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from spoke02-vm
+
+![image](images/nslookup-pgsql-spoke02.png)
+
+- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from Azure Cloud Shell
+
 
 screenshot
 check onpremise-vm can resolve spoke01pgsql.postgresql.database.windows.net and get private IP address
+
+## :checkered_flag: Results
+
+You have now a forced tunnel configuration in place. 
+
+
 
 # Challenge 2: Deploy Azure Firewall to get DNS logs
 
@@ -149,3 +205,12 @@ Outbound endpoint restrictions: Outbound endpoints have the following limitation
 
 DNS forwarding ruleset restrictions: DNS forwarding ruleset have the following limitations:
 - DNS forwarding ruleset cannot be deleted unless the virtual network links under it are deleted
+
+# Finished? Delete your lab
+
+- Delete the resource group onpremise-rg
+- Delete the resource group hub-rg
+- Delete the resource group spoke01-rg
+- Delete the resource group spoke02-rg
+
+Thank you for participating in this MicroHack!
