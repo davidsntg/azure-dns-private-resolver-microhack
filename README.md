@@ -1,9 +1,10 @@
 # Azure DNS Private Resolver - MicroHack
 
-# Scenario
-Contoso Inc.,....Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### [Prerequistes](#prerequisites)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### [Challenge 1: Configure DNS Forwarding Ruleset](#challenge-1-configure-dns-forwarding-ruleset-1)
+
+### [Challenge 2: Deploy Azure Firewall to get DNS logs](#challenge-2-deploy-azure-firewall-to-get-dns-logs-1)
 
 # Prerequisites
 
@@ -23,7 +24,15 @@ In summary:
 - The spoke01 VNet ("spoke01-vnet") contains the private endpoint associated to a PostgreSQL database located in spoke01-rg.
 - All virtual networks contains a Linux Virtual Machine to perform nslookup checks.
 
-## Task 1: Deploy Templates 
+## Task 1: Request Azure DNS Private Resolver private preview access
+
+Azure DNS Private Resolver is currently in Private Preview, you must not deploy it in production or on business critical environment.
+
+To provision Azure DNS Private Resolver, it is required to activate the preview on your subscription. 
+
+**Reach out [azuredns-privaterr@microsoft.com](azuredns-privaterr@microsoft.com) to request service activation on your subscription.**
+
+## Task 2: Deploy Templates 
 
 We are going to use a predefined Terraform template to deploy the base environment. It will be deployed in to *your* Azure subscription, with resources running in the specified Azure region.
 
@@ -54,7 +63,7 @@ To start the Terraform deployment, follow the steps listed below:
 
 - Wait for the deployment to complete. This will take around 30 minutes (the VPN gateway takes a while).
 
-## Task 2: Deploy Azure DNS Private Resolver
+## Task 3: Deploy Azure DNS Private Resolver
 
 Azure DNS Private Resolver cannot be deploy using Terraform currently as the service is in Private Preview. To deploy this service, we will use a Powershell script:
 
@@ -66,7 +75,7 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 
 - When prompted, specify the Azure Subscription Id.
 
-## Task 3: Explore and verify the deployed resources
+## Task 4: Explore and verify the deployed resources
 
 - Verify you can access via Serial Console:
   - onpremise-vm in onpremise-rg 
@@ -239,48 +248,6 @@ Display Azure Firewall DNS logs:
 ![image](images/pgsql-from-onpremise-fw.png)
 
 
-# Challenge 3: Configure continuous public and private DNS resolution capabilities from Onpremise and Azure VMs
-
-
-FAQs
-
-What is an Inbound Endpoint?
-
--  An inbound endpoint will enable name resolution from on-prem or other private location via an IP address which is part of your private Virtual Network address space. This endpoint will require a subnet in the VNet where it’s provisioned, without any other service running in it and can only be delegated to Microsoft.Network/dnsResolvers. Your DNS queries will ingress to Azure.
-- You will be able to resolve these names in scenarios where you have Private DNS Zones, including VMs which are using auto registration, or Private Link enabled services.
-
-What is an Outbound Endpoint?
-
-- An outbound endpoint will enable conditional forwarding name resolution from Azure to on-prem, other cloud providers or external DNS servers. This endpoint will require a subnet in the VNet where it’s provisioned, without any other service running in it and can only be delegated to Microsoft.Network/dnsResolvers. Your DNS queries will egress from Azure.
-
-What is a Virtual Network Link?
-
-- Virtual Network links enable name resolution for Virtual Networks which are linked to an outbound endpoint with a DNS Forwarding Ruleset. This is a 1:1 relationship.
-
-What is a DNS Forwarding Ruleset?
-
-- DNS Forwarding Ruleset is a group of DNS Forwarding Rules (up to 1,000) which can be applied to one or more Outbound Endpoints, or linked to one or more Virtual Networks. This is a 1:N relationship.
-
-What is a DNS Forwarding Rule?
-
-- DNS Forwarding Rule includes one or more target DNS servers which will be used for conditional forwarding and is represented by a domain name, target IP address, target Port and Protocol (UDP or TCP).
-
-Virtual network restrictions: The following restrictions hold with respect to virtual networks:
-- DNS resolver can reference a virtual network in the same region as the DNS resolver only.
-- Virtual network CANNOT be shared between multiple DNS resolvers; i.e., a single virtual network can be referenced by a single DNS resolver only.
-
-Subnet restrictions: Subnets used for DNS resolver have the following limitations:
-- Subnet must have a minimum of /28 address space or a maximum of /24 address space.
-- Subnet CANNOT be shared between multiple DNS resolver endpoints; i.e., a single subnet can be used by a single DNS resolver endpoint only.
-- All IP configurations for a DNS resolver inbound endpoint MUST reference the same subnet; i.e., spanning multiple subnets in IP configurations of a single DNS resolver inbound endpoint is not allowed.
-- Subnet used for IP configuration for DNS resolver inbound endpoints must be within the virtual network referenced by the parent DNS resolver.
-
-Outbound endpoint restrictions: Outbound endpoints have the following limitations:
-- Outbound endpoint cannot be deleted unless the DNS forwarding ruleset and the virtual network links under it are deleted
-
-DNS forwarding ruleset restrictions: DNS forwarding ruleset have the following limitations:
-- DNS forwarding ruleset cannot be deleted unless the virtual network links under it are deleted
-
 # Finished? Delete your lab
 
 - Delete the resource group onpremise-rg
@@ -289,3 +256,8 @@ DNS forwarding ruleset restrictions: DNS forwarding ruleset have the following l
 - Delete the resource group spoke02-rg
 
 Thank you for participating in this MicroHack!
+
+
+# Credits
+
+This lab is inspired by the [internet-outbound-microhack](https://github.com/fguerri/internet-outbound-microhack) of [Federic Guerrini](https://github.com/fguerri).
