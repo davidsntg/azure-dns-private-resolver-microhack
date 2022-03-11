@@ -110,7 +110,7 @@ It means that:
 
 ![image](images/nslookup-pgsql-spoke02.png)
 
-**Nevetheless, *"\*.postgres.database.azure.com"* DNS resolution is not possible from on-premise network** currently.
+**Nevertheless, *"\*.postgres.database.azure.com"* DNS resolution is not possible from on-premise network** currently.
 
 
 Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock these capabilities.
@@ -178,11 +178,27 @@ Your Azure Firewall instance will take about 10 minutes to deploy. When the depl
 
 ## Task 2: Configure Azure Firewall DNS proxy
 
-## Task 3: Configure Azure Firewall Network rules
+Configure Azure Firewall as a DNS Proxy: all requests will be forward to DNS Private Resolver Inbound IP address `10.221.2.4`:
 
-## Task 4: Update Route Tables
+![image](images/azurefirewall-dnsproxy.png)
 
-tests
+## Task 3: Update Hub and spokes Vnet DNS Settings
+
+Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for hub-vnet, spoke01-vnet and spoke02-vnet, configure with Azure Firewall private IP address:
+
+![image](images/dnsservers-hub.png)
+
+**Do the same for spoke01-vnet and spoke02-vnet**.
+
+**Restart** hub-vm, spoke01-vm and spoke02-vm.
+
+  > DNS server(s) used by Azure virtual machine (VM) come during VM boot via DHCP. By restarting VMs here, they will pick the new DNS server to use.
+
+## Task 4: Update Onpremise DNS Forwarding Ruleset for postgresql domain
+
+Instead of pointing to DNS Private Resolver Inbound IP address for *\*.postgres.database.azure.com* domain, requests will be forward to Azure Firewall private IP address in the hub:
+
+![image](images/onpremisednsruleset-azfwhub.png)
 
 # Challenge 3: Configure continuous public and private DNS resolution capabilities from Onpremise and Azure VMs
 
