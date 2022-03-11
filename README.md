@@ -91,51 +91,50 @@ During the infrastructure deployment with Terraform and the Powershell script, n
 
 It means that:
 
--  *\*.contoso.internal* DNS resolution is working from on-premise network:
+1.  *\*.contoso.internal* DNS resolution is working from on-premise network:
   
 ![image](images/nslookup-johndoe-onpremise.png)
 
-**Nevertheless, *\*.contoso.internal* DNS resolution is not possible from hub & spokes networks** currently
--  Privatelink DNS resolution is working from Azure hub & spokes networks:
-   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from hub-vm
+**Nevertheless, *\*.contoso.internal* DNS resolution is not possible from hub & spokes networks** currently.
+
+2. Privatelink DNS resolution is working from Azure hub & spokes networks:
+- *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from hub-vm
   
 ![image](images/nslookup-pgsql-hub.png)
 
-   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke01-vm
+- *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke01-vm
   
 ![image](images/nslookup-pgsql-spoke01.png)
 
-   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke02-vm
+- *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke02-vm
 
 ![image](images/nslookup-pgsql-spoke02.png)
 
 **Nevetheless, *\*..postgres.database.azure.com* DNS resolution is not possible from on-premise network** currently.
 
+
 Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock these capabilities.
 
 ## Task 1: Configure Hub DNS Forwarding Ruleset for *contoso.internal* domain
 
-- In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+* In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
 
 ![image](images/dnsforwardingruleset-hubcfg01.png)
 
-- Add Forwarding Rule for *contoso.internal.* domain to On-premise DNS inbound IP address: `10.233.2.4:53`
+* Add Forwarding Rule for *contoso.internal.* domain to On-premise DNS inbound IP address: `10.233.2.4:53`
 
 ![image](images/dnsforwardingruleset-hub.png)
 
 
-- Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
+* Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
   
-  - From hub-vm: 
-
+  * From hub-vm: 
 ![image](images/nslookup-johndoe-hub.png)
 
-  - From spoke01-vm
-
+  * From spoke01-vm
 ![image](images/nslookup-johndoe-spoke01.png)
 
-  - From spoke02-vm
-
+  * From spoke02-vm
 ![image](images/nslookup-johndoe-spoke02.png)
 
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
