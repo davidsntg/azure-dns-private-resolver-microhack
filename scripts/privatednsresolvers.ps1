@@ -2,12 +2,12 @@
 
 $subscriptionId = Read-Host "Subscription Id"
 
-# Create a new folder on your disk to act as a local PowerShell repository. In this case, we will use C:\bin\PSRepo as an example.
-# Download Az.DnsResolver.0.1.4.nupkg file and place into the directory created earlier. Open a PowerShell window and setup
-# local repository by running the following command:
-# https://github.com/sfiguemsft/privateresolver/blob/main/Az.DnsResolver.0.1.4.zip
-# Register-PSRepository -Name LocalPSRepo -SourceLocation 'C:\bin\PSRepo' -ScriptSourceLocation
-# 'C:\bin\PSRepo' -InstallationPolicy Trusted
+$path = Get-Location
+
+New-Item -path $path -Name "PSRepo" -ItemType "directory"
+Invoke-WebRequest -Uri "https://github.com/sfiguemsft/privateresolver/blob/main/Az.DnsResolver.0.1.4.zip" -OutFile "$path/PSRepo/Az.DnsResolver.0.1.4.zip"
+
+Register-PSRepository -Name LocalPSRepo -SourceLocation "$path/PSRepo" -ScriptSourceLocation "$path/PSRepo" -InstallationPolicy Trusted
 
 # Setup local Powershell repository and install Az.DnsResolver Powershell module
 
