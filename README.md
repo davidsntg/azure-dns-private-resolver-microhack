@@ -117,39 +117,42 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 ## Task 1: Configure Hub DNS Forwarding Ruleset for *contoso.internal* domain
 
-* In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+1. In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
 
 ![image](images/dnsforwardingruleset-hubcfg01.png)
 
-* Add Forwarding Rule for *contoso.internal.* domain to On-premise DNS inbound IP address: `10.233.2.4:53`
+2. Add Forwarding Rule for *contoso.internal.* domain to On-premise DNS inbound IP address: `10.233.2.4:53`
 
 ![image](images/dnsforwardingruleset-hub.png)
 
 
-* Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
+3. Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
   
-  * From hub-vm: 
+* From hub-vm: 
+
 ![image](images/nslookup-johndoe-hub.png)
 
-  * From spoke01-vm
+* From spoke01-vm
+  
 ![image](images/nslookup-johndoe-spoke01.png)
 
-  * From spoke02-vm
+* From spoke02-vm
+  
 ![image](images/nslookup-johndoe-spoke02.png)
 
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
 
-- In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+1. In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
 ![image](images/dnsforwardingruleset-onpremisecfg01.png)
 
-- Add Forwarding Rule for *privatelink.postgres.database.azure.com.* domain to Azure DNS inbound IP address: `10.221.2.4:53`
+2. Add Forwarding Rule for *privatelink.postgres.database.azure.com.* domain to Azure DNS inbound IP address: `10.221.2.4:53`
 
 ![image](images/dnsforwardingruleset-onpremise.png)
 
 
   > If you plan to go add other PaaS Services during this MicroHack and want to enable DNS resolution from on-premise, it will be required too add additional Private DNS zone name. Full list is available [here](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns).
 
-- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from onpremise-vm
+3. Check *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from onpremise-vm
 
 ![image](images/nslookup-pgsql-onpremise.png)
 
