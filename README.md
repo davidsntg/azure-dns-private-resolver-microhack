@@ -158,15 +158,23 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 ## :checkered_flag: Results
 
-- *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is now possible, in addition of on-premise network
+- *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is now possible (in addition of on-premise network):
 
 ![image](images/contoso-from-azure.png)
 
-- Privatelink DNS resolution from on-premise network is now possible, in addition of azure hub&spokes networks.
+- Privatelink DNS resolution from on-premise network is now possible (in addition of azure hub&spokes networks):
 
 ![image](images/pgsql-from-onpremise.png)
 
 # Challenge 2: Deploy Azure Firewall to get DNS logs
+
+Azure DNS Private Resolve does not offer today to view the logs of DNS requests made.
+
+A solution to have these logs is to deploy Azure Firewall and use it as a DNS proxy:
+* Hub & Spokes vnets will have their DNS Servers configured with Private IP address of Azure Firewall
+* Azure Firewall will be configure as DNS Proxy: it will forward all DNS requests to Azure DNS Private Resolver inbound IP address
+
+![image](images/architecture-fw.png)
 
 ## Task 1: Deploy Azure Firewall
 
@@ -199,6 +207,37 @@ Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for
 Instead of pointing to DNS Private Resolver Inbound IP address for *\*.postgres.database.azure.com* domain, requests will be forward to Azure Firewall private IP address in the hub:
 
 ![image](images/onpremisednsruleset-azfwhub.png)
+
+## Task 5: Create a Log Analaytics Workspace and configure Azure Firewall Logs
+
+In hub-rg, create a "networkmonitoring" Log Analytics Workspace:
+
+![image](images/law-provisionning.png)
+
+Configure Azure Firewall Diagnostic Settings to send its logs to *networkmonitoring* Log Analytics Workspace:
+
+![image](images/azfwlogsconfiguration.png)
+ 
+  > It can take 10-20 minutes for the logs to appear in the Log Analytics Workspace. Take a ☕!
+
+## Task 6: Generate DNS request from Azure Hub&spokes VM and display logs
+
+Generate DNS requests from spoke02-vm:
+
+![image](images/spoke02-dnsrequests-azfw.png)
+
+Display Azure Firewall DNS logs:
+
+## :checkered_flag: Results
+
+- *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is still possible (in addition of on-premise network) but goes through Azure Firewall first:
+
+![image](images/contoso-from-azure-fw.png)
+
+- Privatelink DNS resolution from on-premise network is still possible (in addition of azure hub&spokes networks) but goes through Azure Firewall:
+
+![image](images/pgsql-from-onpremise-fw.png)
+
 
 # Challenge 3: Configure continuous public and private DNS resolution capabilities from Onpremise and Azure VMs
 
