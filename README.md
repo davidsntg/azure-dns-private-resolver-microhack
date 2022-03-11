@@ -95,7 +95,7 @@ It means that:
   
 ![image](images/nslookup-johndoe-onpremise.png)
 
-**Nevertheless, *\*.contoso.internal* DNS resolution is not possible from hub & spokes networks** currently.
+**Nevertheless, *"\*.contoso.internal"* DNS resolution is not possible from hub & spokes networks** currently.
 
 2. Privatelink DNS resolution is working from Azure hub & spokes networks:
 - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from hub-vm
@@ -110,7 +110,7 @@ It means that:
 
 ![image](images/nslookup-pgsql-spoke02.png)
 
-**Nevetheless, *\*..postgres.database.azure.com* DNS resolution is not possible from on-premise network** currently.
+**Nevetheless, *"\*.postgres.database.azure.com"* DNS resolution is not possible from on-premise network** currently.
 
 
 Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock these capabilities.
@@ -159,11 +159,22 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 ## :checkered_flag: Results
 
 - *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is now possible, in addition of on-premise network
+
+![image](images/contoso-from-azure.png)
+
 - Privatelink DNS resolution from on-premise network is now possible, in addition of azure hub&spokes networks.
+
+![image](images/pgsql-from-onpremise.png)
 
 # Challenge 2: Deploy Azure Firewall to get DNS logs
 
 ## Task 1: Deploy Azure Firewall
+
+In the Azure Portal, deploy a new Azure Firewall instance in the hub-vnet. A subnet named "AzureFirewallSubnet" has been already created for you.
+
+![image](images/azurefirewall-provisionning.png)
+
+Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile a take note of its *private* IP address. 
 
 ## Task 2: Configure Azure Firewall DNS proxy
 
