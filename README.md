@@ -16,10 +16,10 @@ At the end of this section your base lab build looks as follows:
 
 In summary:
 - Contoso's on-premise datacenter is simulated by an Azure Virtual Network ("onpremise-vnet"). It contains a Virtual Network Gateway to establish a site-2-site VPN connection to Contoso's Azure network.
-- Azure DNS Private Resolver is instanciated on onpremise-vnet. It is configured to forward to Azure DNS infrastructure all domains related to privatelink.
-- Azure Private DNS Zone "contoso.internal" is linked to onpremise-vnet
+- Azure DNS Private Resolver is instanciated on "onpremise-vnet". It is configured to forward to Azure hub DNS inbound IP address the "privatelink.postgres.database.azure.com" domain. It enable PaaS with Private Endpoint DNS resolution capabilities from "onpremise-vnet".
+- Azure Private DNS Zone "contoso.internal" is linked to onpremise-vnet. It emulates a corporate domain.
 - Contoso's Azure virtual datacenter is a hub&spoke network. The hub VNet ("hub-vnet") contains a Virtual Network Gateway that terminates the site-2-site VPN connection to Contoso's on-prem datacenter. 
-- Azure DNS Private Resolver is instanciated on hub-vnet. It is configured to forward to On-premise DNS infrastructure the requests *.contoso.internal
+- Azure DNS Private Resolver is instanciated on "hub-vnet". It is configured to forward to On-premise DNS infrastructure the "contoso.internal" domain. It enables "*.contoso.internal" DNS resolution capability from Azure hub and spokes networks. 
 - The spoke01 VNet ("spoke01-vnet") contains the private endpoint associated to a PostgreSQL database located in spoke01-rg.
 - All virtual networks contains a Linux Virtual Machine to perform nslookup checks.
 
@@ -87,29 +87,43 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 
 # Challenge 1: Configure DNS Forwarding Ruleset
 
-## Task 1: Configure Hub DNS Forwarding Ruleset for contoso.internal domain
+During the infrastructure deployment with Terraform and the Powershell script, no forwarder rules were configured.
+
+It means that:
+
+-  *\*.contoso.internal* DNS resolution is working from on-premise network:
+![image](images/nslookup-johndoe-onpremise.png)
+**Nevertheless, *\*.contoso.internal* DNS resolution is not possible from hub & spokes networks** currently
+-  Privatelink DNS resolution is working from Azure hub & spokes networks:
+   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from hub-vm
+![image](images/nslookup-pgsql-hub.png)
+
+   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke01-vm
+![image](images/nslookup-pgsql-spoke01.png)
+
+   - *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke02-vm
+![image](images/nslookup-pgsql-spoke02.png)
+**Nevetheless, *\*..postgres.database.azure.com* DNS resolution is not possible from on-premise network** currently.
+
+Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock these capabilities.
+
+## Task 1: Configure Hub DNS Forwarding Ruleset for *contoso.internal* domain
 
 - In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
 ![image](images/dnsforwardingruleset-hubcfg01.png)
 
-- Add Forwarding Rule for "contoso.internal." domain to On-premise DNS inbound IP address: 10.233.2.4:53
+- Add Forwarding Rule for *contoso.internal.* domain to On-premise DNS inbound IP address: `10.233.2.4:53`
 
 ![image](images/dnsforwardingruleset-hub.png)
 
-- Check johndoe.contoso.internal DNS resolution from onpremise-vm
 
-![image](images/nslookup-johndoe-onpremise.png)
-
-- Check johndoe.contoso.internal DNS resolution from hub-vm
-
+- Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
+  
+  - From hub-vm: 
 ![image](images/nslookup-johndoe-hub.png)
-
-- Check johndoe.contoso.internal DNS resolution from spoke01-vm
-
+  - From spoke01-vm
 ![image](images/nslookup-johndoe-spoke01.png)
-
-- Check johndoe.contoso.internal DNS resolution from spoke02-vm
-
+  - From spoke02-vm
 ![image](images/nslookup-johndoe-spoke02.png)
 
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
@@ -117,7 +131,7 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 - In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
 ![image](images/dnsforwardingruleset-onpremisecfg01.png)
 
-- Add Forwarding Rule for "privatelink.postgres.database.azure.com" domain to Azure DNS Private Resolver inbound IP address: 10.221.2.4:53
+- Add Forwarding Rule for *privatelink.postgres.database.azure.com.* domain to Azure DNS inbound IP address: `10.221.2.4:53`
 
 ![image](images/dnsforwardingruleset-onpremise.png)
 
@@ -128,29 +142,10 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 
 ![image](images/nslookup-pgsql-onpremise.png)
 
-- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from hub-vm
-
-![image](images/nslookup-pgsql-hub.png)
-
-- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from spoke01-vm
-
-![image](images/nslookup-pgsql-spoke01.png)
-
-- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from spoke02-vm
-
-![image](images/nslookup-pgsql-spoke02.png)
-
-- Check spoke01-t1q0mq-pgsql.postgres.database.azure.com DNS resolution from Azure Cloud Shell
-
-
-screenshot
-check onpremise-vm can resolve spoke01pgsql.postgresql.database.windows.net and get private IP address
-
 ## :checkered_flag: Results
 
-You have now a forced tunnel configuration in place. 
-
-
+- *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is now possible, in addition of on-premise network
+- Privatelink DNS resolution from on-premise network is now possible, in addition of azure hub&spokes networks.
 
 # Challenge 2: Deploy Azure Firewall to get DNS logs
 
