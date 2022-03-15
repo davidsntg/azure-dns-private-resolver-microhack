@@ -26,6 +26,23 @@ resource "azurerm_private_dns_zone_virtual_network_link" "contoso_onpremise" {
 
 
 #####################################################################################
+# Azure Private DNS Zone - contoso.azure linked to hub-vnet
+#####################################################################################
+
+resource "azurerm_private_dns_zone" "contoso_azure" {
+  name                = "contoso.azure"
+  resource_group_name = azurerm_resource_group.hub-rg.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "contoso_azure" {
+  name                  = "link"
+  resource_group_name   = azurerm_resource_group.hub-rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.contoso_azure.name
+  virtual_network_id    = azurerm_virtual_network.hub-vnet.id
+}
+
+
+#####################################################################################
 # Azure Private DNS Zone - privatelink.postgres.database.azure.com linked to hub-vnet
 #####################################################################################
 
