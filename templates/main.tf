@@ -37,14 +37,3 @@ resource "azurerm_resource_group" "spoke01-rg" {
     microhack   = "dns-private-resolver"
   }
 }
-
-resource "azurerm_resource_group" "spoke02-rg" {
-  name     = "spoke02-rg"
-  location = var.azure_location
-
-  tags = {
-    environment = "cloud"
-    deployment  = "terraform"
-    microhack   = "dns-private-resolver"
-  }
-}
