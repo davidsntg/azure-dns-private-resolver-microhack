@@ -265,7 +265,6 @@ You can then observe the associated DNS queries in you Azure infrastructure pass
 - Delete the resource group onpremise-rg
 - Delete the resource group hub-rg
 - Delete the resource group spoke01-rg
-- Delete the resource group spoke02-rg
 
 Thank you for participating in this MicroHack!
 
