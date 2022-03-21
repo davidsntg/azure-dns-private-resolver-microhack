@@ -39,7 +39,7 @@ We are going to use a predefined Terraform template to deploy the base environme
 
 To start the Terraform deployment, follow the steps listed below:
 
-- Login to Azure cloud shell [https://shell.azure.com/](https://shell.azure.com/)
+- Login to Azure cloud shell (Powershell is a requirement for future steps) [https://shell.azure.com/](https://shell.azure.com/)
 - Ensure that you are operating within the correct subscription via:
 
 `az account show`
@@ -81,8 +81,7 @@ Azure DNS Private Resolver cannot be deploy using Terraform currently as the ser
 - Verify you can access via Serial Console:
   - onpremise-vm in onpremise-rg 
   - hub-vm in hub-vnet in hub-rg 
-  - spoke01-vm in spoke01-rg 
-  - spoke02-vm in spoke02-rg
+  - spoke01-vm in spoke01-rg
 
 - Verify you can see hubdnsresolver and hubdnsruleset in hub-rg (**check** the *Show hidden types* checkbox)
 - Verify you can see onpremisednsresolver and onpremisednsruleset in onpremise-rg (**check** the *Show hidden types* checkbox)
@@ -116,11 +115,7 @@ It means that:
   
 ![image](images/nslookup-pgsql-spoke01.png)
 
-- *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from spoke02-vm
-
-![image](images/nslookup-pgsql-spoke02.png)
-
-**Nevertheless, *"\*.postgres.database.azure.com"* DNS resolution is not possible from on-premise network** currently.
+**Nevertheless, *"\*.postgres.database.azure.com"* private DNS resolution is not possible from on-premise network currently and the public IP address associated with the database would be returned.**
 
 
 Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock these capabilities.
@@ -146,10 +141,6 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
   
 ![image](images/nslookup-johndoe-spoke01.png)
 
-* From spoke02-vm
-  
-![image](images/nslookup-johndoe-spoke02.png)
-
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
 
 1. In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
@@ -160,7 +151,7 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 ![image](images/dnsforwardingruleset-onpremise.png)
 
 
-  > If you plan to go add other PaaS Services during this MicroHack and want to enable DNS resolution from on-premise, it will be required too add additional Private DNS zone name. Full list is available [here](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns).
+  > If you plan to go add other PaaS Services during this MicroHack and want to enable DNS resolution from on-premise, it will be required to add additional Private DNS zone name. Full list is available [here](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns).
 
 3. Check *spoke01-t1q0mq-pgsql.postgres.database.azure.com* DNS resolution from onpremise-vm
 
@@ -178,7 +169,7 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 # Challenge 2: Deploy Azure Firewall to get DNS logs
 
-Azure DNS Private Resolve does not offer today to view the logs of DNS requests made.
+Azure DNS Private Resolver does not offer today capabilities to view the logs of DNS requests made.
 
 A solution to have these logs is to deploy Azure Firewall and use it as a DNS proxy:
 * Hub & Spokes vnets will have their DNS Servers configured with Private IP address of Azure Firewall
@@ -192,7 +183,7 @@ In the Azure Portal, deploy a new Azure Firewall instance in the hub-vnet. A sub
 
 ![image](images/azurefirewall-provisionning.png)
 
-Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile a take note of its *private* IP address. 
+Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile and take note of its *private* IP address. 
 
 ## Task 2: Configure Azure Firewall DNS proxy
 
@@ -202,13 +193,13 @@ Configure Azure Firewall as a DNS Proxy: all requests will be forward to DNS Pri
 
 ## Task 3: Update Hub and spokes Vnet DNS Settings
 
-Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for hub-vnet, spoke01-vnet and spoke02-vnet, configure with Azure Firewall private IP address:
+Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for hub-vnet and spoke01-vnet, configure with Azure Firewall private IP address:
 
 ![image](images/dnsservers-hub.png)
 
-**Do the same for spoke01-vnet and spoke02-vnet**.
+**Do the same for spoke01-vnet**.
 
-**Restart** hub-vm, spoke01-vm and spoke02-vm.
+**Restart** hub-vm and spoke01-vm.
 
   > DNS server(s) used by Azure virtual machine (VM) come during VM boot via DHCP. By restarting VMs here, they will pick the new DNS server to use.
 
@@ -232,11 +223,31 @@ Configure Azure Firewall Diagnostic Settings to send its logs to *networkmonitor
 
 ## Task 6: Generate DNS request from Azure Hub&spokes VM and display logs
 
-Generate DNS requests from spoke02-vm:
+Generate DNS requests from spoke01-vm:
 
-![image](images/spoke02-dnsrequests-azfw.png)
+![image](images/spoke01-dnsrequests-azfw.png)
 
-Display Azure Firewall DNS logs:
+Display Azure Firewall DNS logs using the following query
+```
+// Azure Firewall DNS proxy log data 
+// Start from this query if you want to understand the Firewall DNS proxy log data. This query will show the last 100 log records but by adding simple filter statements at the end of the query the results can be tweaked. 
+// DNS proxy log data 
+// Parses the DNS proxy log data. 
+AzureDiagnostics
+| where Category == "AzureFirewallDnsProxy"
+| parse msg_s with "DNS Request: " SourceIP ":" SourcePortInt:int " - " QueryID:int " " RequestType " " RequestClass " " hostname ". " protocol " " details
+| extend
+    ResponseDuration = extract("[0-9]*.?[0-9]+s$", 0, msg_s),
+    SourcePort = tostring(SourcePortInt),
+    QueryID =  tostring(QueryID)
+| project TimeGenerated,SourceIP,hostname,RequestType,ResponseDuration,details,msg_s
+| order by TimeGenerated
+| limit 100
+```
+
+You can then observe the associated DNS queries in you Azure infrastructure passing through the Azure Firewall
+
+![image](images/azurefirewall-dnslogs.png)
 
 ## :checkered_flag: Results
 
