@@ -10,10 +10,15 @@
 
 ## Overview
 
-In order to use the MicroHack time most effectively, the following tasks should be completed prior to starting the session.
-At the end of this section your base lab build looks as follows:
+This Microhack purpose is to demonstrate the Azure DNS Private resolver feature. A common architecture found around DNS setup between on-premise and Azure environments looks like
 
 ![image](images/architecture.png)
+
+For this workshop, we'll emulate the on-premise part with an on-premise Vnet and Azure DNS Private resolver also as shown on the following diagram
+
+![image](images/architecture-microhack.png)
+
+In order to use the MicroHack time most effectively, the following tasks should be completed prior to starting the session.
 
 In summary:
 - Contoso's on-premise datacenter is simulated by an Azure Virtual Network ("onpremise-vnet"). It contains a Virtual Network Gateway to establish a site-2-site VPN connection to Contoso's Azure network.
