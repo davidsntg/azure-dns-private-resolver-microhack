@@ -107,7 +107,7 @@ It means that:
 
 1.  *\*.contoso.internal* DNS resolution is working from on-premise network:
   
-![image](images/nslookup-johndoe-onpremise.png)
+![image](images/nslookup-onpremise-vm-internal-from-onpremise-vm.png)
 
 **Nevertheless, *"\*.contoso.internal"* DNS resolution is not possible from hub & spokes networks** currently.
 
@@ -136,15 +136,15 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 ![image](images/dnsforwardingruleset-hub.png)
 
 
-3. Check that now, hub & spokes networks are able to resolve *johndoe.contoso.internal* domain
+3. Check that now, hub & spokes networks are able to resolve *onpremise-vm.contoso.internal* domain
   
 * From hub-vm: 
 
-![image](images/nslookup-johndoe-hub.png)
+![image](images/nslookup-onpremisevm-hub.png)
 
 * From spoke01-vm
   
-![image](images/nslookup-johndoe-spoke01.png)
+![image](images/nslookup-onpremisevm-spoke01.png)
 
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
 
@@ -228,11 +228,9 @@ Configure Azure Firewall Diagnostic Settings to send its logs to *networkmonitor
 
 ## Task 6: Generate DNS request from Azure Hub&spokes VM and display logs
 
-Generate DNS requests from spoke01-vm:
+* Generate DNS requests from spoke01-vm/
 
-![image](images/spoke01-dnsrequests-azfw.png)
-
-Display Azure Firewall DNS logs using the following query
+* Display Azure Firewall DNS logs using the following query
 ```
 // Azure Firewall DNS proxy log data 
 // Start from this query if you want to understand the Firewall DNS proxy log data. This query will show the last 100 log records but by adding simple filter statements at the end of the query the results can be tweaked. 
@@ -250,7 +248,7 @@ AzureDiagnostics
 | limit 100
 ```
 
-You can then observe the associated DNS queries in you Azure infrastructure passing through the Azure Firewall
+* Observe DNS queries going through Azure Firewall
 
 ![image](images/azurefirewall-dnslogs.png)
 
