@@ -172,15 +172,60 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 ![image](images/pgsql-from-onpremise.png)
 
-# Challenge 2: Deploy Azure Firewall to get DNS logs
+
+# Challenge 2: DNS forwarding ruleset on spokes
+
+So far, we configured our spoke vnet DNS settings to point to the Azure DNS inbound IP address directly but there is also a possibility to rely on the DNS Private resolver solution at the spoke level. Let's see how.
+
+## Task 1: Reset the DNS settings on the spoke Vnet
+
+On the terraform template we used to build the whole infrastructure, we set the DNS settings of the hub and the spoke Vnets to point to the IP address `10.221.2.4` which is the Azure DNS inbound IP address (located in the snet-dns-inbound subnet of the hub Vnet).
+
+We will remove this configuration and edit our Vnets so that they will now use the default configuration: Default (Azure-provided). It means that all DNS queries of all Vnets will be send to the Azure Provided DNS IP 168.63.129.16. The default behavior for DNS resolution will be first to look at private DNS zones and DNS Forwarding Rulesets linked to the Vnet.
+
+![image](images/spoke01-vnet-default-dns.png)
+
+> :warning: **Do not forget to restart associated VM(s) to refresh their DNS configuration.**
+
+## Task 2: Attach the forwarding ruleset
+
+Once the default DNS settings is in place, the next step consists in linking the Forwarding Ruleset to the spoke Vnet.
+
+![image](images/dnsforwardingruleset-spoke01-link.png)
+
+
+## Task 3
+
+Let's first go back to our last example to understand the resolution path for a DNS query from on premise to a private endpoint.  
+
+Before starting this challenge #2, DNS servers on the spoke Vnet was pointing to `10.221.2.4` and no Forwarding Ruleset was attached to this Vnet. So far, the DNS resolution path from the spoke-vm to the PostgreSQL instance was the following
+
+![image](images/pgsql_from_azure_v1.png)
+
+Now, once Task 1 and Task 2 are accomplished, we rely on the Azure Provided DNS IP for DNS resolution which will parse DNS private zones and Forwarding Ruleset. We must then reconfigure the Forwarding Ruleset to explicitely give the DNS servers per domain:
+
+![image](images/dnsforwardingruleset-challenge-2.png)
+
+Our design, here, is pretty straightforward as our ruleset consists in sending the DNS queries for **contoso.internal** to the on-premise private DNS resolver and **contoso.azure and privatelink.postgresql.database.azure.com** to the hub private DNS resolver. DNS queries from spoke-vm still works but in a different way. The query path is quite different and the Azure Provided DNS IP become even more central in all DNS resolutions
+
+![image](images/pgsql_from_azure_v2.png)
+
+> Another option could have been to link the spoke Vnet to the privatelink private DNS zone but we recommand to avoid full-mesh links for private DNS zones and to rely on the hub instead.
+
+# Challenge 3: Deploy Azure Firewall to get DNS logs
 
 Azure DNS Private Resolver does not offer today capabilities to view the logs of DNS requests made.
 
 A solution to have these logs is to deploy Azure Firewall and use it as a DNS proxy:
-* Hub & Spokes vnets will have their DNS Servers configured with Private IP address of Azure Firewall
 * Azure Firewall will be configure as DNS Proxy: it will forward all DNS requests to Azure DNS Private Resolver inbound IP address
 
+For DNS settings, the 2 options seen before still apply:
+* **Option a:** Hub & Spokes vnets will have their DNS Servers configured with Private IP address of Azure Firewall
+* **Option b:** Hub & Spokes vnets will have their DNS Servers configured with Default (Azure-provided) and forwarding rules will point to the Private IP address of Azure Firewall
+
 ![image](images/architecture-fw.png)
+
+Only Task 3 will vary depending on the option you choose. 
 
 ## Task 1: Deploy Azure Firewall
 
@@ -190,13 +235,14 @@ In the Azure Portal, deploy a new Azure Firewall instance in the hub-vnet. A sub
 
 Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile and take note of its *private* IP address. 
 
-## Task 2: Configure Azure Firewall DNS proxy
+
+### Task 2: Configure Azure Firewall DNS proxy
 
 Configure Azure Firewall as a DNS Proxy: all requests will be forward to DNS Private Resolver Inbound IP address `10.221.2.4`:
 
-![image](images/azurefirewall-dnsproxy.png)
+![image](images/azurefirewall-dnsproxy-default.png)
 
-## Task 3: Update Hub and spokes Vnet DNS Settings
+## Option a - Task 3: Update Hub and spokes Vnet DNS Settings
 
 Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for hub-vnet and spoke01-vnet, configure with Azure Firewall private IP address:
 
@@ -207,10 +253,34 @@ Instead of configuring DNS Private Resolver Inbound IP address as DNS Server for
 **Restart** hub-vm and spoke01-vm.
 
   > DNS server(s) used by Azure virtual machine (VM) come during VM boot via DHCP. By restarting VMs here, they will pick the new DNS server to use.
+  
+## Option b - Task 3: Update Azure DNS Forwarding Ruleset
 
-## Task 4: Update Onpremise DNS Forwarding Ruleset for postgresql domain
+We must rework the current Forwarding Ruleset so that:
+- All DNS queries (for all domains) from spokes will be sent to the Azure Firewall private IP
+- DNS queries to from the hub *contoso.internal* are sent to `10.233.2.4`
 
-Instead of pointing to DNS Private Resolver Inbound IP address for *\*.postgres.database.azure.com* domain, requests will be forward to Azure Firewall private IP address in the hub:
+Here is this global architecture redesign
+
+![image](images/architecture-fw-and-ruleset.png)
+
+As you can see, we know have 2 different rulesets with different rules: one for the hub and one for the spoke(s).
+
+First, let's remove unnecessary rules from the hub Forwarding Ruleset
+
+![image](images/dnsforwardingruleset-hub-chal-3b.png)
+
+Then, let's link the spoke Forwarding Ruleset (created during setup but not attached to anything so far)
+
+![image](images/dnsforwardingruleset-spoke01-link-chal-3b.png)
+
+And finally, complete the rules of this ruleset
+
+![image](images/dnsforwardingruleset-spoke01-rules-chal-3b.png)
+
+## Task 4: Update Onpremise DNS Forwarding Ruleset
+
+Instead of pointing to DNS Private Resolver Inbound IP address for *\*.postgres.database.azure.com* and *contoso.azure* domains, requests will be forward to Azure Firewall private IP address in the hub:
 
 ![image](images/onpremisednsruleset-azfwhub.png)
 
@@ -261,7 +331,6 @@ AzureDiagnostics
 - Privatelink DNS resolution from on-premise network is still possible (in addition of azure hub&spokes networks) but goes through Azure Firewall:
 
 ![image](images/pgsql-from-onpremise-fw.png)
-
 
 # Finished? Delete your lab
 
