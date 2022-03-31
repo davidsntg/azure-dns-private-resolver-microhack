@@ -326,13 +326,25 @@ AzureDiagnostics
 
 ## :checkered_flag: Results
 
+### Option a
+
 - *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is still possible (in addition of on-premise network) but goes through Azure Firewall first:
 
-![image](images/contoso-from-azure-fw.png)
+![image](images/contoso-from-azure-fw-option-a.png)
 
 - Privatelink DNS resolution from on-premise network is still possible (in addition of azure hub&spokes networks) but goes through Azure Firewall:
 
-![image](images/pgsql-from-onpremise-fw.png)
+![image](images/pgsql-from-onpremise-fw-option-a.png)
+
+### Option b
+
+- *\*.contoso.internal* DNS resolution from Azure hub&spokes networks is still possible (in addition of on-premise network) but goes through Azure Firewall first:
+
+![image](images/contoso-from-azure-fw-option-b.png)
+
+- Privatelink DNS resolution from on-premise network is still possible (in addition of azure hub&spokes networks) but goes through Azure Firewall:
+
+![image](images/pgsql-from-onpremise-fw-option-b.png)
 
 # Finished? Delete your lab
 
