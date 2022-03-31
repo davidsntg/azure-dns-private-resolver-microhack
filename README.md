@@ -4,7 +4,9 @@
 
 ### [Challenge 1: Configure DNS Forwarding Ruleset](#challenge-1-configure-dns-forwarding-ruleset-1)
 
-### [Challenge 2: Deploy Azure Firewall to get DNS logs](#challenge-2-deploy-azure-firewall-to-get-dns-logs-1)
+### [Challenge 2: DNS forwarding ruleset on spokes](#challenge-2-dns-forwarding-ruleset-on-spokes-1)
+
+### [Challenge 3: Deploy Azure Firewall to get DNS logs](#challenge-3-deploy-azure-firewall-to-get-dns-logs-1)
 
 # Prerequisites
 
