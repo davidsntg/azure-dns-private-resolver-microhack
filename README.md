@@ -241,10 +241,10 @@ For DNS settings, the 2 options seen above still apply:
 
 * **Option b:** 
   * Spokes vnets will have their DNS Settings configured with Default (Azure-provided)
-  * Hub vnet DNS Settings will be configured **with the private IP address of Azure Firewall 
+  * Hub vnet DNS Settings will be configured with the private IP address of Azure Firewall 
   * Forwarding rules will point to the Azure Firewall private IP address
 
-**TODO ALEXIS**: Mettre le schéma ici avec les 2 options côté spokes dns settings.
+![image](images/architecture-fw.png)
 
 Only Task 3 will vary depending on the option you choose. 
 
