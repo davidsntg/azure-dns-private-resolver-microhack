@@ -238,7 +238,7 @@ In the Azure Portal, deploy a new Azure Firewall instance in the hub-vnet. A sub
 Your Azure Firewall instance will take about 10 minutes to deploy. When the deployment completes, go to the new firewall's overview tile and take note of its *private* IP address. 
 
 
-### Task 2: Configure Azure Firewall DNS proxy
+## Task 2: Configure Azure Firewall DNS proxy
 
 Configure Azure Firewall as a DNS Proxy: all requests will be forward to DNS Private Resolver Inbound IP address `10.221.2.4`:
 
@@ -266,7 +266,11 @@ Here is this global architecture redesign
 
 ![image](images/architecture-fw-and-ruleset.png)
 
-As you can see, we know have 2 different rulesets with different rules: one for the hub and one for the spoke(s).
+As you can see, we now have 2 different rulesets with different rules: one for the hub and one for the spoke(s):
+- Spoke DNS Forwarding Ruleset: make sure that every DNS requests coming from the spoke vnets go through the Azure Firewall
+- Hub DNS Forwarding Ruleset: as *contoso.azure* and *privatelink.postgresql.database.azure.com* Private DNS zones are already attached to the hub and are resolvable, no forwarding rules are required
+
+We can also notice that the DNS settings for the Hub Vnet is pointing to the IP address of the Azure Firewall instead of *Default (Azure provided)*. From a DNS standpoint, both configurations are valid but the first option has the advantage to send all DNS queries originating from the Hub Vnet into the Azure FW and to be able to see the associated logs.
 
 First, let's remove unnecessary rules from the hub Forwarding Ruleset
 
@@ -351,6 +355,8 @@ AzureDiagnostics
 - Delete the resource group onpremise-rg
 - Delete the resource group hub-rg
 - Delete the resource group spoke01-rg
+
+  > As of now, there is a bug where you will not be able to remove vnets that have a vnet link in a DNS Rorwarding Ruleset. Please remove Vnet links before removing the resource groups.
 
 Thank you for participating in this MicroHack!
 
