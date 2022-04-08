@@ -40,6 +40,9 @@ $hubDnsForwardingRuleset = Get-AzDnsForwardingRuleset -Name hubdnsruleset -Resou
 $hubVnet = Get-AzVirtualNetwork -Name hub-vnet -ResourceGroupName hub-rg
 New-AzDnsForwardingRulesetVirtualNetworkLink -DnsForwardingRulesetName $hubDnsForwardingRuleset.Name -ResourceGroupName hub-rg -VirtualNetworkLinkName "vnetlink" -VirtualNetworkId $hubVnet.Id -SubscriptionId "$subscriptionId"
 
+# Azure spoke - Create the DNS forwarding ruleset (not used before challenge 3)
+New-AzDnsForwardingRuleset -Name spokednsruleset -ResourceGroupName spoke01-rg -DnsResolverOutboundEndpoint $hubOutboundEndpoint -Location eastus2
+
 # On-premise - Create the DNS resolver instance
 New-AzDnsResolver -Name onpremisednsresolver -ResourceGroupName onpremise-rg -Location westcentralus -VirtualNetworkId "/subscriptions/$subscriptionId/resourceGroups/onpremise-rg/providers/Microsoft.Network/virtualNetworks/onpremise-vnet"
 
