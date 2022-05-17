@@ -32,15 +32,7 @@ In summary:
 - The spoke01 VNet ("spoke01-vnet") contains the private endpoint associated to a PostgreSQL database located in spoke01-rg.
 - All virtual networks contain a Linux Virtual Machine to perform `nslookup` checks.
 
-## Task 1: Request Azure DNS Private Resolver private preview access
-
-Azure DNS Private Resolver is currently in Private Preview, you must not deploy it in production or on business critical environment.
-
-To provision Azure DNS Private Resolver, it is required to activate the preview on your subscription. 
-
-**Reach out [azuredns-privaterr@microsoft.com](azuredns-privaterr@microsoft.com) to request service activation on your subscription.**
-
-## Task 2: Deploy Templates 
+## Task 1: Deploy Templates 
 
 We are going to use a predefined Terraform template to deploy the base environment. It will be deployed on to *your* Azure subscription, with resources running in the specified Azure region.
 
@@ -73,7 +65,7 @@ To start the Terraform deployment, follow the steps listed below:
 
   > You may encounter an **error during the first deployment**. If this is the case, re-execute the `terraform apply`.
 
-## Task 3: Deploy Azure DNS Private Resolver
+## Task 2: Deploy Azure DNS Private Resolver
 
 Azure DNS Private Resolver cannot be deployed using Terraform currently as the service is in Private Preview. To deploy this service, we will use a Powershell script:
 
@@ -87,7 +79,7 @@ Azure DNS Private Resolver cannot be deployed using Terraform currently as the s
 
   > You may encounter the error "*New-AzDnsResolver_CreateExpanded: The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-04-01-preview'.*". It means that the subscription ID is not yet enabled with Azure DNS Private Resolver. Check **Prerequistes** again. 
 
-## Task 4: Explore and verify the deployed resources
+## Task 3: Explore and verify the deployed resources
 
 - Verify you can access via Serial Console:
   - onpremise-vm in onpremise-rg 
