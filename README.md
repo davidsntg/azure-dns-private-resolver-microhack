@@ -12,7 +12,7 @@
 
 ## Overview
 
-This Microhack purpose is to demonstrate the Azure DNS Private resolver feature. A common architecture found around DNS setup between on-premise and Azure environments looks like
+This Microhack purpose is to demonstrate the [Azure DNS Private resolver](https://docs.microsoft.com/en-gb/azure/dns/dns-private-resolver-overview) feature. A common architecture found around DNS setup between on-premise and Azure environments looks like
 
 ![image](images/architecture.png)
 
