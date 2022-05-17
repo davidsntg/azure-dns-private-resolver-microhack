@@ -34,7 +34,12 @@ In summary:
 
 ## Task 1: Deploy Templates 
 
-We are going to use a predefined Terraform template to deploy the base environment. It will be deployed on to *your* Azure subscription, with resources running in the specified Azure region.
+We are going to use a predefined Terraform template to deploy the base environment. It will be deployed on to *your* Azure subscription, with resources running in the below Azure Regions:
+
+- EastUS2
+- WestCentralUS
+
+You should ensure that resource deployments are allowed in these regions before proceeding.
 
 To start the Terraform deployment, follow the steps listed below:
 
@@ -67,7 +72,7 @@ To start the Terraform deployment, follow the steps listed below:
 
 ## Task 2: Deploy Azure DNS Private Resolver
 
-Azure DNS Private Resolver cannot be deployed using Terraform currently as the service is in Private Preview. To deploy this service, we will use a Powershell script:
+Azure DNS Private Resolver cannot be deployed using Terraform currently as the service is in Public Preview. To deploy this service, we will use a Powershell script:
 
 - Go to the  folder "azure-dns-private-resolver-microhack/scripts" and execute `privatednsresolvers.ps1` script:
 
@@ -77,7 +82,7 @@ Azure DNS Private Resolver cannot be deployed using Terraform currently as the s
 
 - When prompted, specify the Azure Subscription Id.
 
-  > You may encounter the error "*New-AzDnsResolver_CreateExpanded: The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-04-01-preview'.*". It means that the subscription ID is not yet enabled with Azure DNS Private Resolver. Check **Prerequistes** again. 
+  > You may encounter the error "*New-AzDnsResolver_CreateExpanded: The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-04-01-preview'.*". It means that the subscription ID is not yet enabled with Azure DNS Private Resolver. Check [Prerequistes](#prerequisites) again. 
 
 ## Task 3: Explore and verify the deployed resources
 
