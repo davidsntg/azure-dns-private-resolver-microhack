@@ -45,11 +45,11 @@ To start the Terraform deployment, follow the steps listed below:
 
 - Clone the following GitHub repository 
 
-`git clone https://github.com/dawlysd/draft-azure-dns-private-resolver-microhack`
+`git clone https://github.com/dawlysd/azure-dns-private-resolver-microhack`
 
-- Go to the new folder "draft-azure-dns-private-resolver-microhack/templates" and initialize the terraform modules and download the azurerm resource provider
+- Go to the new folder "azure-dns-private-resolver-microhack/templates" and initialize the terraform modules and download the azurerm resource provider
 
-`cd draft-azure-dns-private-resolver-microhack/templates`
+`cd azure-dns-private-resolver-microhack/templates`
 
 `terraform init`
 
@@ -69,9 +69,9 @@ To start the Terraform deployment, follow the steps listed below:
 
 Azure DNS Private Resolver cannot be deployed using Terraform currently as the service is in Private Preview. To deploy this service, we will use a Powershell script:
 
-- Go to the  folder "draft-azure-dns-private-resolver-microhack/scripts" and execute `privatednsresolvers.ps1` script:
+- Go to the  folder "azure-dns-private-resolver-microhack/scripts" and execute `privatednsresolvers.ps1` script:
 
-`cd draft-azure-dns-private-resolver-microhack/scripts`
+`cd azure-dns-private-resolver-microhack/scripts`
 
 `./privatednsresolvers.ps1`
 
