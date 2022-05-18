@@ -218,7 +218,7 @@ Now, once Task 1 and Task 2 are accomplished, we rely on the Azure Provided DNS 
 
 Our design, here, is pretty straightforward as our ruleset consists in:
 * Sending the DNS queries for **contoso.internal** to the on-premise private DNS resolver `10.233.2.4`
-* Sending the DNS queries for **contoso.azure and privatelink.postgresql.database.azure.com** to the hub private DNS resolver `10.221.2.4`
+* Sending the DNS queries for **contoso.azure and privatelink.postgres.database.azure.com** to the hub private DNS resolver `10.221.2.4`
 
 DNS queries from spoke-vm still work but in a different way. The query path is quite different and the Azure Provided DNS IP becomes even more central in all DNS resolutions. Example again of DNS resolution path from the spoke-vm to the PostgreSQL instance was the following:
 
@@ -284,7 +284,7 @@ Here is this global architecture redesign
 
 As you can see, we now have 2 different rulesets with different rules: one for the hub and one for the spoke(s):
 - Spoke DNS Forwarding Ruleset: make sure that every DNS request coming from the spoke vnets go through the Azure Firewall
-- Hub DNS Forwarding Ruleset: as *contoso.azure* and *privatelink.postgresql.database.azure.com* Private DNS zones are already attached to the hub and are resolvable, no forwarding rules are required
+- Hub DNS Forwarding Ruleset: as *contoso.azure* and *privatelink.postgres.database.azure.com* Private DNS zones are already attached to the hub and are resolvable, no forwarding rules are required
 
 We can also notice that the DNS settings for the Hub Vnet is pointing to the IP address of the Azure Firewall instead of *Default (Azure provided)*. From a DNS standpoint, both configurations are valid but the first option has the advantage of sending all DNS queries originating from Hub Vnet into the Azure FW and to being able to see the associated logs.
 
