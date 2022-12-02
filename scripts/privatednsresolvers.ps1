@@ -1,3 +1,5 @@
+# OLD - DO NOT USE THIS POWERSHELL SCRIPT
+
 # Request subscription id
 
 $subscriptionId = Read-Host "Subscription Id"

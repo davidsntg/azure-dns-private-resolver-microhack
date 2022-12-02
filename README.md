@@ -70,29 +70,15 @@ To start the Terraform deployment, follow the steps listed below:
 
   > You may encounter an **error during the first deployment**. If this is the case, re-execute the `terraform apply`.
 
-## Task 2: Deploy Azure DNS Private Resolver
-
-Azure DNS Private Resolver cannot be deployed using Terraform currently as the service is in Public Preview. To deploy this service, we will use a Powershell script:
-
-- Go to the  folder "azure-dns-private-resolver-microhack/scripts" and execute `privatednsresolvers.ps1` script:
-
-`cd azure-dns-private-resolver-microhack/scripts`
-
-`./privatednsresolvers.ps1`
-
-- When prompted, specify the Azure Subscription Id.
-
-  > You may encounter the error "*New-AzDnsResolver_CreateExpanded: The resource type could not be found in the namespace 'Microsoft.Network' for api version '2020-04-01-preview'.*". It means that the subscription ID is not yet enabled with Azure DNS Private Resolver. Check [Prerequistes](#prerequisites) again. 
-
-## Task 3: Explore and verify the deployed resources
+## Task 2: Explore and verify the deployed resources
 
 - Verify you can access via Serial Console:
   - onpremise-vm in onpremise-rg 
   - hub-vm in hub-vnet in hub-rg 
   - spoke01-vm in spoke01-rg
 
-- Verify you can see hubdnsresolver and hubdnsruleset in hub-rg (**check** the *Show hidden types* checkbox)
-- Verify you can see onpremisednsresolver and onpremisednsruleset in onpremise-rg (**check** the *Show hidden types* checkbox)
+- Verify you can see hubdnsresolver and hubdnsruleset in hub-rg
+- Verify you can see onpremisednsresolver and onpremisednsruleset in onpremise-rg 
 - Verify the S2S VPN connections are connected
 
 ## :checkered_flag: Results
@@ -130,7 +116,7 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 ## Task 1: Configure Hub DNS Forwarding Ruleset for *contoso.internal* domain
 
-1. In hub-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+1. In hub-rg, open Dns Forwarding Ruleset
 
 ![image](images/dnsforwardingruleset-hubcfg01.png)
 
@@ -151,7 +137,7 @@ Let's configure DNS Forwarding Ruleset for both Hub and Onpremise to unlock thes
 
 ## Task 2: Configure Onpremise DNS Forwarding Ruleset for postgresql domain
 
-1. In onpremise-rg, check "Show hidden types" and open Dns Forwarding Ruleset
+1. In onpremise-rg, open Dns Forwarding Ruleset
 ![image](images/dnsforwardingruleset-onpremisecfg01.png)
 
 2. Add Forwarding Rule for *privatelink.postgres.database.azure.com.* domain to Azure DNS inbound IP address: `10.221.2.4:53`

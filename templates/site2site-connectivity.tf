@@ -103,11 +103,11 @@ resource "azurerm_local_network_gateway" "onpremise-lng" {
   resource_group_name   = azurerm_resource_group.onpremise-rg.name
   location              = azurerm_resource_group.onpremise-rg.location
   gateway_address       = azurerm_public_ip.hub-vpngw-ip.ip_address
-  address_space         = ["${azurerm_virtual_network_gateway.hub-vpngw.bgp_settings[0].peering_address}/32"]
+  address_space         = ["${azurerm_virtual_network_gateway.hub-vpngw.bgp_settings[0].peering_addresses[0].default_addresses[0]}/32"]
   
   bgp_settings  {
       asn                    = azurerm_virtual_network_gateway.hub-vpngw.bgp_settings[0].asn
-      bgp_peering_address    = azurerm_virtual_network_gateway.hub-vpngw.bgp_settings[0].peering_address
+      bgp_peering_address    = azurerm_virtual_network_gateway.hub-vpngw.bgp_settings[0].peering_addresses[0].default_addresses[0]
   }
 
   tags = {
@@ -128,11 +128,11 @@ resource "azurerm_local_network_gateway" "hub-lng" {
   resource_group_name   = azurerm_resource_group.hub-rg.name
   location              = azurerm_resource_group.hub-rg.location
   gateway_address       = azurerm_public_ip.onpremise-vpngw-ip.ip_address
-  address_space         = ["${azurerm_virtual_network_gateway.onpremise-vpngw.bgp_settings[0].peering_address}/32"]
+  address_space         = ["${azurerm_virtual_network_gateway.onpremise-vpngw.bgp_settings[0].peering_addresses[0].default_addresses[0]}/32"]
   
   bgp_settings  {
       asn                    = azurerm_virtual_network_gateway.onpremise-vpngw.bgp_settings[0].asn
-      bgp_peering_address    = azurerm_virtual_network_gateway.onpremise-vpngw.bgp_settings[0].peering_address
+      bgp_peering_address    = azurerm_virtual_network_gateway.onpremise-vpngw.bgp_settings[0].peering_addresses[0].default_addresses[0]
   }
 
   tags = {

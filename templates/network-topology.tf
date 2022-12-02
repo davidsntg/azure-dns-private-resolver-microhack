@@ -30,35 +30,31 @@ resource "azurerm_subnet" "onpremise-default-subnet" {
 }
 
 resource "azurerm_subnet" "onpremise-dns-inbound-subnet" {
-    name                    = "snet-dns-inbound"
-    resource_group_name     = azurerm_resource_group.onpremise-rg.name
-    virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-    address_prefixes        = ["10.233.2.0/28"]
-    /*delegation {
-      name = "Microsoft.Network.dnsResolvers"
-      service_delegation {
-        actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action"
-        ]
-        name = "Microsoft.Network/dnsResolvers"
-      }
-    }*/
+  name                    = "snet-dns-inbound"
+  resource_group_name     = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes        = ["10.233.2.0/28"]
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
 }
 
 resource "azurerm_subnet" "onpremise-dns-outbound-subnet" {
-    name                    = "snet-dns-outbound"
-    resource_group_name     = azurerm_resource_group.onpremise-rg.name
-    virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-    address_prefixes        = ["10.233.2.16/28"]
-    /*delegation {
-      name = "Microsoft.Network.dnsResolvers"
-      service_delegation {
-        actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action"
-        ]
-        name = "Microsoft.Network/dnsResolvers"
-      }
-    }*/
+  name                    = "snet-dns-outbound"
+  resource_group_name     = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes        = ["10.233.2.16/28"]
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
 }
 
 #########################################################
@@ -94,35 +90,31 @@ resource "azurerm_subnet" "hub-default-subnet" {
 }
 
 resource "azurerm_subnet" "hub-dns-inbound-subnet" {
-    name                    = "snet-dns-inbound"
-    resource_group_name     = azurerm_resource_group.hub-rg.name
-    virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-    address_prefixes        = ["10.221.2.0/28"]
-    /*delegation {
-      name = "Microsoft.Network.dnsResolvers"
-      service_delegation {
-        actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action"
-        ]
-        name = "Microsoft.Network/dnsResolvers"
-      }
-    }*/
+  name                    = "snet-dns-inbound"
+  resource_group_name     = azurerm_resource_group.hub-rg.name
+  virtual_network_name    = azurerm_virtual_network.hub-vnet.name
+  address_prefixes        = ["10.221.2.0/28"]
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
 }
 
 resource "azurerm_subnet" "hub-dns-outbound-subnet" {
-    name                    = "snet-dns-outbound"
-    resource_group_name     = azurerm_resource_group.hub-rg.name
-    virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-    address_prefixes        = ["10.221.2.16/28"]
-    /*delegation {
-      name = "Microsoft.Network.dnsResolvers"
-      service_delegation {
-        actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action"
-        ]
-        name = "Microsoft.Network/dnsResolvers"
-      }
-    }*/
+  name                    = "snet-dns-outbound"
+  resource_group_name     = azurerm_resource_group.hub-rg.name
+  virtual_network_name    = azurerm_virtual_network.hub-vnet.name
+  address_prefixes        = ["10.221.2.16/28"]
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
 }
 
 resource "azurerm_subnet" "hub-firewall-subnet" {
@@ -155,7 +147,7 @@ resource "azurerm_subnet" "spoke01-default-subnet" {
     resource_group_name                            = azurerm_resource_group.spoke01-rg.name
     virtual_network_name                           = azurerm_virtual_network.spoke01-vnet.name
     address_prefixes                               = ["10.221.8.0/24"]
-    enforce_private_link_endpoint_network_policies = true
+    private_endpoint_network_policies_enabled      = true
 }
 
 #########################################################
