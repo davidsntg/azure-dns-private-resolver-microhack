@@ -13,8 +13,8 @@ resource "random_string" "asa" {
 
 resource "azurerm_storage_account" "onpremise-sa" {
   name                     = "onpremisesa${random_string.asa.result}"
-  location            = azurerm_resource_group.onpremise-rg.location
-  resource_group_name = azurerm_resource_group.onpremise-rg.name
+  location                 = azurerm_resource_group.onpremise-rg.location
+  resource_group_name      = azurerm_resource_group.onpremise-rg.name
   account_replication_type = "LRS"
   account_tier             = "Standard"
 }
@@ -38,14 +38,14 @@ resource "azurerm_network_interface" "onpremise-vm-nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "onpremise-vm" {
-  name                              = "onpremise-vm"
-  resource_group_name               = azurerm_resource_group.onpremise-rg.name
-  location                          = azurerm_resource_group.onpremise-rg.location
-  size                              = var.vm_size
-  admin_username                    = "adminuser"
-  disable_password_authentication   = "false"
-  admin_password                    = var.admin_password
-  network_interface_ids             = [azurerm_network_interface.onpremise-vm-nic.id]
+  name                            = "onpremise-vm"
+  resource_group_name             = azurerm_resource_group.onpremise-rg.name
+  location                        = azurerm_resource_group.onpremise-rg.location
+  size                            = var.vm_size
+  admin_username                  = "adminuser"
+  disable_password_authentication = "false"
+  admin_password                  = var.admin_password
+  network_interface_ids           = [azurerm_network_interface.onpremise-vm-nic.id]
 
   os_disk {
     caching              = "ReadWrite"
@@ -102,14 +102,14 @@ resource "azurerm_network_interface" "hub-vm-nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "hub-vm" {
-  name                              = "hub-vm"
-  resource_group_name               = azurerm_resource_group.hub-rg.name
-  location                          = azurerm_resource_group.hub-rg.location
-  size                              = var.vm_size
-  admin_username                    = "adminuser"
-  disable_password_authentication   = "false"
-  admin_password                    = var.admin_password
-  network_interface_ids             = [azurerm_network_interface.hub-vm-nic.id]
+  name                            = "hub-vm"
+  resource_group_name             = azurerm_resource_group.hub-rg.name
+  location                        = azurerm_resource_group.hub-rg.location
+  size                            = var.vm_size
+  admin_username                  = "adminuser"
+  disable_password_authentication = "false"
+  admin_password                  = var.admin_password
+  network_interface_ids           = [azurerm_network_interface.hub-vm-nic.id]
 
   os_disk {
     caching              = "ReadWrite"
@@ -166,14 +166,14 @@ resource "azurerm_network_interface" "spoke01-vm-nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "spoke01-vm" {
-  name                              = "spoke01-vm"
-  resource_group_name               = azurerm_resource_group.spoke01-rg.name
-  location                          = azurerm_resource_group.spoke01-rg.location
-  size                              = var.vm_size
-  admin_username                    = "adminuser"
-  disable_password_authentication   = "false"
-  admin_password                    = var.admin_password
-  network_interface_ids             = [azurerm_network_interface.spoke01-vm-nic.id]
+  name                            = "spoke01-vm"
+  resource_group_name             = azurerm_resource_group.spoke01-rg.name
+  location                        = azurerm_resource_group.spoke01-rg.location
+  size                            = var.vm_size
+  admin_username                  = "adminuser"
+  disable_password_authentication = "false"
+  admin_password                  = var.admin_password
+  network_interface_ids           = [azurerm_network_interface.spoke01-vm-nic.id]
 
   os_disk {
     caching              = "ReadWrite"
