@@ -7,7 +7,7 @@ resource "azurerm_virtual_network" "onpremise-vnet" {
   resource_group_name = azurerm_resource_group.onpremise-rg.name
   address_space       = ["10.233.0.0/21"]
   dns_servers         = ["10.233.2.4"]
-  
+
   tags = {
     environment = "onprem"
     deployment  = "terraform"
@@ -16,24 +16,24 @@ resource "azurerm_virtual_network" "onpremise-vnet" {
 }
 
 resource "azurerm_subnet" "onpremise-gateway-subnet" {
-    name                    = "GatewaySubnet"
-    resource_group_name     = azurerm_resource_group.onpremise-rg.name
-    virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-    address_prefixes        = ["10.233.0.0/26"]
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes     = ["10.233.0.0/26"]
 }
 
 resource "azurerm_subnet" "onpremise-default-subnet" {
-    name                    = "snet-default"
-    resource_group_name     = azurerm_resource_group.onpremise-rg.name
-    virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-    address_prefixes        = ["10.233.1.0/24"]
+  name                 = "snet-default"
+  resource_group_name  = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes     = ["10.233.1.0/24"]
 }
 
 resource "azurerm_subnet" "onpremise-dns-inbound-subnet" {
-  name                    = "snet-dns-inbound"
-  resource_group_name     = azurerm_resource_group.onpremise-rg.name
-  virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-  address_prefixes        = ["10.233.2.0/28"]
+  name                 = "snet-dns-inbound"
+  resource_group_name  = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes     = ["10.233.2.0/28"]
   delegation {
     name = "Microsoft.Network.dnsResolvers"
     service_delegation {
@@ -44,10 +44,10 @@ resource "azurerm_subnet" "onpremise-dns-inbound-subnet" {
 }
 
 resource "azurerm_subnet" "onpremise-dns-outbound-subnet" {
-  name                    = "snet-dns-outbound"
-  resource_group_name     = azurerm_resource_group.onpremise-rg.name
-  virtual_network_name    = azurerm_virtual_network.onpremise-vnet.name
-  address_prefixes        = ["10.233.2.16/28"]
+  name                 = "snet-dns-outbound"
+  resource_group_name  = azurerm_resource_group.onpremise-rg.name
+  virtual_network_name = azurerm_virtual_network.onpremise-vnet.name
+  address_prefixes     = ["10.233.2.16/28"]
   delegation {
     name = "Microsoft.Network.dnsResolvers"
     service_delegation {
@@ -67,7 +67,7 @@ resource "azurerm_virtual_network" "hub-vnet" {
   resource_group_name = azurerm_resource_group.hub-rg.name
   address_space       = ["10.221.0.0/21"]
   dns_servers         = ["10.221.2.4"]
-  
+
   tags = {
     environment = "cloud"
     deployment  = "terraform"
@@ -76,24 +76,24 @@ resource "azurerm_virtual_network" "hub-vnet" {
 }
 
 resource "azurerm_subnet" "hub-gateway-subnet" {
-    name                    = "GatewaySubnet"
-    resource_group_name     = azurerm_resource_group.hub-rg.name
-    virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-    address_prefixes        = ["10.221.0.0/26"]
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.hub-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = ["10.221.0.0/26"]
 }
 
 resource "azurerm_subnet" "hub-default-subnet" {
-    name                    = "snet-default"
-    resource_group_name     = azurerm_resource_group.hub-rg.name
-    virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-    address_prefixes        = ["10.221.1.0/24"]
+  name                 = "snet-default"
+  resource_group_name  = azurerm_resource_group.hub-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = ["10.221.1.0/24"]
 }
 
 resource "azurerm_subnet" "hub-dns-inbound-subnet" {
-  name                    = "snet-dns-inbound"
-  resource_group_name     = azurerm_resource_group.hub-rg.name
-  virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-  address_prefixes        = ["10.221.2.0/28"]
+  name                 = "snet-dns-inbound"
+  resource_group_name  = azurerm_resource_group.hub-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = ["10.221.2.0/28"]
   delegation {
     name = "Microsoft.Network.dnsResolvers"
     service_delegation {
@@ -104,10 +104,10 @@ resource "azurerm_subnet" "hub-dns-inbound-subnet" {
 }
 
 resource "azurerm_subnet" "hub-dns-outbound-subnet" {
-  name                    = "snet-dns-outbound"
-  resource_group_name     = azurerm_resource_group.hub-rg.name
-  virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-  address_prefixes        = ["10.221.2.16/28"]
+  name                 = "snet-dns-outbound"
+  resource_group_name  = azurerm_resource_group.hub-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = ["10.221.2.16/28"]
   delegation {
     name = "Microsoft.Network.dnsResolvers"
     service_delegation {
@@ -118,10 +118,10 @@ resource "azurerm_subnet" "hub-dns-outbound-subnet" {
 }
 
 resource "azurerm_subnet" "hub-firewall-subnet" {
-    name                    = "AzureFirewallSubnet"
-    resource_group_name     = azurerm_resource_group.hub-rg.name
-    virtual_network_name    = azurerm_virtual_network.hub-vnet.name
-    address_prefixes        = ["10.221.3.0/26"]
+  name                 = "AzureFirewallSubnet"
+  resource_group_name  = azurerm_resource_group.hub-rg.name
+  virtual_network_name = azurerm_virtual_network.hub-vnet.name
+  address_prefixes     = ["10.221.3.0/26"]
 }
 
 #########################################################
@@ -143,11 +143,11 @@ resource "azurerm_virtual_network" "spoke01-vnet" {
 }
 
 resource "azurerm_subnet" "spoke01-default-subnet" {
-    name                                           = "snet-default"
-    resource_group_name                            = azurerm_resource_group.spoke01-rg.name
-    virtual_network_name                           = azurerm_virtual_network.spoke01-vnet.name
-    address_prefixes                               = ["10.221.8.0/24"]
-    private_endpoint_network_policies_enabled      = true
+  name                                      = "snet-default"
+  resource_group_name                       = azurerm_resource_group.spoke01-rg.name
+  virtual_network_name                      = azurerm_virtual_network.spoke01-vnet.name
+  address_prefixes                          = ["10.221.8.0/24"]
+  private_endpoint_network_policies_enabled = true
 }
 
 #########################################################
@@ -155,27 +155,27 @@ resource "azurerm_subnet" "spoke01-default-subnet" {
 #########################################################  
 
 resource "azurerm_virtual_network_peering" "spoke01-hub" {
-  name                              = "PEERING_SPOKE01_TO_HUB"
-  resource_group_name               = azurerm_resource_group.spoke01-rg.name
-  virtual_network_name              = azurerm_virtual_network.spoke01-vnet.name
-  remote_virtual_network_id         = azurerm_virtual_network.hub-vnet.id
-  allow_virtual_network_access      = true
-  allow_forwarded_traffic           = true
-  allow_gateway_transit             = false
-  use_remote_gateways               = true
-  
-  depends_on                        = [azurerm_virtual_network_gateway.hub-vpngw]
+  name                         = "PEERING_SPOKE01_TO_HUB"
+  resource_group_name          = azurerm_resource_group.spoke01-rg.name
+  virtual_network_name         = azurerm_virtual_network.spoke01-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.hub-vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit        = false
+  use_remote_gateways          = true
+
+  depends_on = [azurerm_virtual_network_gateway.hub-vpngw]
 }
 
 resource "azurerm_virtual_network_peering" "hub-spoke01" {
-  name                              = "PEERING_HUB_TO_SPOKE01"
-  resource_group_name               = azurerm_resource_group.hub-rg.name
-  virtual_network_name              = azurerm_virtual_network.hub-vnet.name
-  remote_virtual_network_id         = azurerm_virtual_network.spoke01-vnet.id
-  allow_virtual_network_access      = true
-  allow_forwarded_traffic           = false
-  allow_gateway_transit             = true
-  use_remote_gateways               = false
+  name                         = "PEERING_HUB_TO_SPOKE01"
+  resource_group_name          = azurerm_resource_group.hub-rg.name
+  virtual_network_name         = azurerm_virtual_network.hub-vnet.name
+  remote_virtual_network_id    = azurerm_virtual_network.spoke01-vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = false
+  allow_gateway_transit        = true
+  use_remote_gateways          = false
 
-  depends_on                        = [azurerm_virtual_network_gateway.hub-vpngw]
+  depends_on = [azurerm_virtual_network_gateway.hub-vpngw]
 }

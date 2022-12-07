@@ -1,8 +1,8 @@
 
 resource "random_string" "random" {
-  length = 6
+  length  = 6
   special = false
-  upper = false
+  upper   = false
 }
 
 resource "azurerm_postgresql_server" "spoke01-pgsql" {
@@ -12,12 +12,12 @@ resource "azurerm_postgresql_server" "spoke01-pgsql" {
 
   sku_name = "GP_Gen5_2"
 
-  
+
   storage_mb                   = 51200
   backup_retention_days        = 7
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = true
-  
+
 
   administrator_login              = "adminuser"
   administrator_login_password     = var.admin_password
@@ -35,7 +35,7 @@ resource "azurerm_private_endpoint" "spoke01-pgsql-pe" {
   private_service_connection {
     name                           = "spoke01-${random_string.random.result}-pgsql-privateserviceconnection"
     private_connection_resource_id = azurerm_postgresql_server.spoke01-pgsql.id
-    subresource_names              = [ "postgresqlServer" ]
+    subresource_names              = ["postgresqlServer"]
     is_manual_connection           = false
   }
 
