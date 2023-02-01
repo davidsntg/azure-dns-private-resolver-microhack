@@ -48,11 +48,11 @@ To start the Terraform deployment, follow the steps listed below:
 
 `az account show`
 
-- Clone the following GitHub repository 
+- Clone the current GitHub repository 
 
 `git clone https://github.com/dawlysd/azure-dns-private-resolver-microhack`
 
-- Go to the new folder "azure-dns-private-resolver-microhack/templates" and initialize the terraform modules and download the azurerm resource provider
+- Go to the new folder "azure-dns-private-resolver-microhack/templates" and initialize the terraform modules
 
 `cd azure-dns-private-resolver-microhack/templates`
 
